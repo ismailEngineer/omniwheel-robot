@@ -20,11 +20,11 @@ socket.connect("tcp://"+ip_adress+":5555")
 
 # BUILD JSON
 Robot_request = {
-    "Motor1":0,
-    "Motor2":0,
-    "Motor3":0,
-    "LCD":1,
-    "LED":0
+    "motor1":0,
+    "motor2":0,
+    "motor3":0,
+    "lcd":1,
+    "led":0
 }
 
 #  Do 10 requests, waiting each time for a response

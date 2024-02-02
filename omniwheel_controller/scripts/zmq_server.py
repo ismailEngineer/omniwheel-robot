@@ -16,8 +16,8 @@ while True:
     print("Motor1 : ",message["motor1"])
     print("Motor2 : ",message["motor2"])
     print("Motor3 : ",message["motor3"])
-    print("LCD : ",message["LCD"])
-    print("LED : ",message["LED"])
+    print("LCD : ",message["lcd"])
+    print("LED : ",message["led"])
 
     # JSON MESSAGE 
     ret = {"result": 0}
