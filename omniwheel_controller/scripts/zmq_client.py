@@ -16,7 +16,7 @@ socket = context.socket(zmq.REQ)
 ip_adress = "192.168.1.167"
 
 # replace localhost by the ip adress of the server
-socket.connect("tcp:/"+ip_adress+":5555")
+socket.connect("tcp://"+ip_adress+":5555")
 
 # BUILD JSON
 Robot_request = {
