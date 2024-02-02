@@ -13,8 +13,14 @@ while True:
     #  Do some 'work'
     time.sleep(1)
 
+    print("Motor1 : ",message["motor1"])
+    print("Motor2 : ",message["motor2"])
+    print("Motor3 : ",message["motor3"])
+    print("LCD : ",message["LCD"])
+    print("LED : ",message["LED"])
+
     # JSON MESSAGE 
-    ret = {"a": 123, "b": 321}
+    ret = {"result": 0}
 
     #  Send reply back to client
     socket.send_json(ret)
