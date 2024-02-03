@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="on_off_button">
     <property name="geometry">
      <rect>
       <x>490</x>
@@ -27,7 +27,7 @@
      <string>ON/OFF</string>
     </property>
    </widget>
-   <widget class="QSlider" name="horizontalSlider">
+   <widget class="QSlider" name="servo_slide_bar">
     <property name="geometry">
      <rect>
       <x>280</x>
@@ -43,7 +43,7 @@
      <enum>Qt::Horizontal</enum>
     </property>
    </widget>
-   <widget class="QDoubleSpinBox" name="doubleSpinBox">
+   <widget class="QDoubleSpinBox" name="m1_input_box">
     <property name="geometry">
      <rect>
       <x>280</x>
@@ -53,7 +53,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QDoubleSpinBox" name="doubleSpinBox_2">
+   <widget class="QDoubleSpinBox" name="m3_input_box">
     <property name="geometry">
      <rect>
       <x>280</x>
@@ -63,7 +63,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QDoubleSpinBox" name="doubleSpinBox_3">
+   <widget class="QDoubleSpinBox" name="m2_input_box">
     <property name="geometry">
      <rect>
       <x>280</x>
