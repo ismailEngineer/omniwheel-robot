@@ -14,16 +14,42 @@ class Ui(QtWidgets.QMainWindow):
     def __init__(self):
         super(Ui, self).__init__()
         uic.loadUi('../ui/controller.ui', self)
-        self.on_off_button.clicked.connect(self.on_off_cliked)
-        self.m1_input_box.valueChanged.connect(self.show_result)
-        self.m2_input_box.valueChanged.connect(self.show_result)
-        self.m3_input_box.valueChanged.connect(self.show_result)
+        self.m1_value = 0
+        self.m2_value = 0
+        self.m3_value = 0
+        self.stop_motor_button.clicked.connect(self.stop_cliked)
+        self.stop_button.clicked.connect(self.stop_cliked)
+        self.go_button.clicked.connect(self.start_motor)
+        self.set_max_button.clicked.connect(self.set_max_value)
+        self.set_min_button.clicked.connect(self.set_min_value)
+        self.reset_button.clicked.connect(self.set_min_value)
         self.show()
 
-    def on_off_cliked(self):
-        print("ON/OFF CLICKED !!")
+    def stop_cliked(self):
+        print("STOP CLICKED !!")
+        self.set_min_value()
 
-    def show_result(self):
+
+
+    def set_max_value(self):
+        self.m1_value = 255
+        self.m2_value = 255
+        self.m3_value = 255
+        # change value in input box
+        self.m1_input_box.setValue(self.m1_value)
+        self.m2_input_box.setValue(self.m2_value)
+        self.m3_input_box.setValue(self.m3_value)
+
+    def set_min_value(self):
+        self.m1_value = 0
+        self.m2_value = 0
+        self.m3_value = 0
+        # change value in input box
+        self.m1_input_box.setValue(self.m1_value)
+        self.m2_input_box.setValue(self.m2_value)
+        self.m3_input_box.setValue(self.m3_value)
+
+    def start_motor(self):
         global socket
         print("IN ")
         m1 = self.m1_input_box.value()

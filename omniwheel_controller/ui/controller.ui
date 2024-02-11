@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1433</width>
-    <height>573</height>
+    <width>1435</width>
+    <height>524</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,7 +26,7 @@
     <property name="title">
      <string>Manual Control</string>
     </property>
-    <widget class="QPushButton" name="on_off_button_5">
+    <widget class="QPushButton" name="go_button">
      <property name="geometry">
       <rect>
        <x>340</x>
@@ -61,8 +61,11 @@
        <height>61</height>
       </rect>
      </property>
+     <property name="maximum">
+      <double>255.000000000000000</double>
+     </property>
     </widget>
-    <widget class="QPushButton" name="on_off_button_4">
+    <widget class="QPushButton" name="stop_motor_button">
      <property name="geometry">
       <rect>
        <x>160</x>
@@ -75,7 +78,7 @@
       <string>STOP</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="on_off_button">
+    <widget class="QPushButton" name="set_max_button">
      <property name="geometry">
       <rect>
        <x>350</x>
@@ -96,6 +99,9 @@
        <width>141</width>
        <height>61</height>
       </rect>
+     </property>
+     <property name="maximum">
+      <double>255.000000000000000</double>
      </property>
     </widget>
     <widget class="QLabel" name="label">
@@ -120,6 +126,9 @@
        <height>51</height>
       </rect>
      </property>
+     <property name="maximum">
+      <double>255.000000000000000</double>
+     </property>
     </widget>
     <widget class="QLabel" name="label_3">
      <property name="geometry">
@@ -134,7 +143,7 @@
       <string>Motor 3</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="on_off_button_2">
+    <widget class="QPushButton" name="set_min_button">
      <property name="geometry">
       <rect>
        <x>350</x>
@@ -147,7 +156,7 @@
       <string>SET MIN</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="on_off_button_3">
+    <widget class="QPushButton" name="reset_button">
      <property name="geometry">
       <rect>
        <x>350</x>
@@ -294,7 +303,7 @@
       <string>Servo</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="on_off_button_6">
+    <widget class="QPushButton" name="stop_button">
      <property name="geometry">
       <rect>
        <x>350</x>
@@ -324,8 +333,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1433</width>
-     <height>39</height>
+     <width>1435</width>
+     <height>22</height>
     </rect>
    </property>
   </widget>
