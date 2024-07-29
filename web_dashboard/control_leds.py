@@ -1,6 +1,9 @@
 from flask import Flask, render_template, request, jsonify
 import RPi.GPIO as GPIO
 
+
+from smbus import SMBus
+
 app = Flask(__name__)
 
 # Configuration des GPIO
@@ -11,6 +14,11 @@ button_pin = 17
 GPIO.setup(led_pin, GPIO.OUT)
 GPIO.setup(button_pin, GPIO.IN)
 value_to_display = 0
+
+# Configure i2C adress
+addr = 0x8 # bus address
+bus = SMBus(1) # indicates /dev/ic2-1
+
 
 @app.route('/')
 def index():
@@ -26,8 +34,10 @@ def control():
     if device == 'motor1' or  device == 'motor2' or  device == 'motor3':
         if state == 'on':
             GPIO.output(led_pin, GPIO.HIGH)
+            bus.write_byte(addr, 0x10) # switch it on
         else:
             GPIO.output(led_pin, GPIO.LOW)
+            bus.write_byte(addr, 0x0) # switch it on
     elif device == 'any':
         if state == 'on':
             GPIO.output(motor_pin, GPIO.HIGH)

@@ -18,7 +18,7 @@ while numb == 1:
 	ledstate = input(">>>>   ")
 
 	if ledstate == "1":
-		bus.write_byte(addr, 0x1) # switch it on
+		bus.write_byte(addr, 0x10) # switch it on
 	elif ledstate == "0":
 		bus.write_byte(addr, 0x0) # switch it on
 	else:
