@@ -1,3 +1,4 @@
 .vscode/*
 PCB_BOARD/ST_prot-backups
 omniwheel_simulation/.vscode/
+omniwheel_controller/scripts/__pycache__/
