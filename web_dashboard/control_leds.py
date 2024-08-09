@@ -1,24 +1,30 @@
 from flask import Flask, render_template, request, jsonify
-import RPi.GPIO as GPIO
+from hardware_control import *
 
-
-from smbus import SMBus
 
 app = Flask(__name__)
 
 # Configuration des GPIO
-GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False)
 led_pin = 18
+output_pins = [led_pin] # 
 button_pin = 17
-GPIO.setup(led_pin, GPIO.OUT)
-GPIO.setup(button_pin, GPIO.IN)
+input_pins = [button_pin] # 
+init_all()
+bus = init_i2c(1) # indicates /dev/ic2-1
+setup_GPIOs_OUT(output_pins)
+setup_GPIOs_IN(input_pins)
+
 value_to_display = 0
 
 # Configure i2C adress
-addr = 0x8 # bus address
-bus = SMBus(1) # indicates /dev/ic2-1
+arduino_addr = 0x8 # bus arduino_address
 
+
+def get_request():
+    data = request.get_json()
+    device = data['device']
+    state = data['state']
+    return(data,device,state)
 
 @app.route('/')
 def index():
@@ -27,22 +33,15 @@ def index():
 @app.route('/control', methods=['POST'])
 def control():
     global value_to_display
-    data = request.get_json()
-    device = data['device']
-    state = data['state']
+    data, device, state = get_request()
     
     if device == 'motor1' or  device == 'motor2' or  device == 'motor3':
         if state == 'on':
-            GPIO.output(led_pin, GPIO.HIGH)
-            bus.write_byte(addr, 0x10) # switch it on
+            turn_on_output_gpio(led_pin)
+            sent_message_i2c(bus,arduino_addr,0x10)
         else:
-            GPIO.output(led_pin, GPIO.LOW)
-            bus.write_byte(addr, 0x0) # switch it on
-    elif device == 'any':
-        if state == 'on':
-            GPIO.output(motor_pin, GPIO.HIGH)
-        else:
-            GPIO.output(motor_pin, GPIO.LOW)
+            turn_off_output_gpio(led_pin)
+            sent_message_i2c(bus,arduino_addr,0x0)
 
     value_to_display += 1
     
@@ -57,7 +56,7 @@ def get_value():
 @app.route('/read_input', methods=['GET'])
 def read_input():
     # Lire l'état de la broche d'entrée
-    input_state = GPIO.input(button_pin)
+    input_state = get_input_value(button_pin)
     return jsonify({'input_state': input_state})
 
 if __name__ == '__main__':
