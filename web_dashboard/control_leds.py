@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, jsonify
+import sys
 from hardware_control import *
-
 
 app = Flask(__name__)
 
@@ -19,6 +19,11 @@ value_to_display = 0
 # Configure i2C adress
 arduino_addr = 0x8 # bus arduino_address
 
+def app_init(setup_option):
+    if setup_option == "real":
+        print("Initi REAL mode")
+    else : 
+        print("Initi Simulation mode")
 
 def get_request():
     data = request.get_json()
@@ -60,6 +65,8 @@ def read_input():
     return jsonify({'input_state': input_state})
 
 if __name__ == '__main__':
+    print(sys.argv)
+    #app_init(sys.argv)
     app.run(host='0.0.0.0', port=5000)
 
 
