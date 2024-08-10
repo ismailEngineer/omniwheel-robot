@@ -6,3 +6,7 @@ body {
     display: block;
     margin: 5px 0; /* Add some margin for better spacing */
 }
+.manual{
+    width: 100px;
+    height: auto;
+}
