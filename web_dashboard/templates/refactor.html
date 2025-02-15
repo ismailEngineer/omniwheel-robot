@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robot Control Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/refactor.css') }}">
+</head>
+<body>
+    <h1>Robot Control Dashboard</h1>
+    <div class="container">
+        <div class="section robot-info">
+            <h2>Robot Information</h2>
+            <ul>
+                <li><span class="icon battery"></span><span>Battery Level: <span id="battery">75%</span></span></li>
+                <li><span class="icon temperature"></span><span>CPU Temperature: <span id="cpuTemp">45°C</span></span></li>
+                <li><span class="icon cpu"></span><span>CPU Usage: <span id="cpuUsage">30%</span></span></li>
+                <li><span class="icon ram"></span><span>RAM Usage: <span id="ramUsage">60%</span></span></li>
+                <li><span class="icon remote"></span><span>Remote Controller: <span id="rcStatus">Connected</span></span></li>
+            </ul>
+        </div>
+
+        <div class="section robot-control">
+            <h2>Robot Control</h2>
+            <div class="joystick" id="joystick"></div>
+            <div class="button-group">
+                <button class="button on">ON</button>
+                <button class="button off">OFF</button>
+            </div>
+            <div class="led on"></div>
+            <div class="led off"></div>
+        </div>
+
+        <div class="video-and-radar">
+            <div class="video-stream">
+                <h3>Video Stream</h3>
+            </div>
+            <div class="radar">
+                <div class="radar-icon"></div>
+                <div class="radar-circle"></div>
+                <div class="radar-circle"></div>
+                <div class="radar-circle"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const joystick = document.getElementById('joystick');
+
+        joystick.addEventListener('mousedown', (event) => {
+            const joystickRect = joystick.getBoundingClientRect();
+            const handleMouseMove = (e) => {
+                const x = e.clientX - joystickRect.left - joystickRect.width / 2;
+                const y = e.clientY - joystickRect.top - joystickRect.height / 2;
+
+                const distance = Math.sqrt(x * x + y * y);
+                const maxRadius = joystickRect.width / 2;
+
+                if (distance < maxRadius) {
+                    joystick.style.transform = `translate(${x}px, ${y}px)`;
+                } else {
+                    const angle = Math.atan2(y, x);
+                    joystick.style.transform = `translate(${Math.cos(angle) * maxRadius}px, ${Math.sin(angle) * maxRadius}px)`;
+                }
+            };
+
+            const handleMouseUp = () => {
+                joystick.style.transform = 'translate(0, 0)';
+                document.removeEventListener('mousemove', handleMouseMove);
+                document.removeEventListener('mouseup', handleMouseUp);
+            };
+
+            document.addEventListener('mousemove', handleMouseMove);
+            document.addEventListener('mouseup', handleMouseUp);
+        });
+    </script>
+</body>
+</html>

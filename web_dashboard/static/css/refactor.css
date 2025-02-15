@@ -1,0 +1,173 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9;
+    color: #333;
+}
+
+h1 {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    padding: 20px;
+}
+
+.section {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.robot-info ul {
+    list-style: none;
+    padding: 0;
+}
+
+.robot-info li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.icon {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+    background-size: cover;
+}
+
+.icon.battery {
+    background-image: url('https://img.icons8.com/ios-filled/50/000000/battery.png');
+}
+
+.icon.temperature {
+    background-image: url('https://img.icons8.com/ios-filled/50/000000/temperature.png');
+}
+
+.icon.cpu {
+    background-image: url('https://img.icons8.com/ios-filled/50/000000/cpu.png');
+}
+
+.icon.ram {
+    background-image: url('https://img.icons8.com/ios-filled/50/000000/ram.png');
+}
+
+.icon.remote {
+    background-image: url('https://img.icons8.com/ios-filled/50/000000/remote-control.png');
+}
+
+.robot-control {
+    text-align: center;
+}
+
+.joystick {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 20px;
+    background: #ddd;
+    border-radius: 50%;
+    position: relative;
+    overflow: hidden;
+}
+
+.joystick::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    background: #333;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.button-group {
+    margin: 20px 0;
+}
+
+.button {
+    margin: 0 10px;
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.button.off {
+    background-color: #dc3545;
+}
+
+.led {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin: 5px;
+    border-radius: 50%;
+}
+
+.led.on {
+    background-color: #28a745;
+}
+
+.led.off {
+    background-color: #6c757d;
+}
+
+.video-and-radar {
+    grid-column: span 2;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.video-stream {
+    width: 45%;
+    height: 300px;
+    background: #222;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+}
+
+.radar {
+    width: 45%;
+    height: 300px;
+    position: relative;
+    background: #ddd;
+    border-radius: 50%;
+}
+
+.radar-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 30px;
+    height: 30px;
+    background: #333;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.radar-circle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    border: 2px dashed rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}

@@ -2,5 +2,7 @@ body {
     padding: 20px;
 }
 .control-buttons {
-    margin-top: 20px;
+    /* margin-top: 20px; */
+    display: block;
+    margin: 5px 0; /* Add some margin for better spacing */
 }

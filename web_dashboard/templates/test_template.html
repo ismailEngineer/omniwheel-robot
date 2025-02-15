@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contrôle des Moteurs et LEDs</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center my-4">Robot Dashboard</h1>
+        <div class="row">
+            <div class="col-sm-3">
+                <h2> M1</h2>
+                <button class="btn btn-success control-buttons" onclick="controlDevice('motor1', 'on')">
+                    <i class="fas fa-lightbulb"></i> ON
+                </button>
+                <button class="btn btn-danger control-buttons" onclick="controlDevice('motor1', 'off')">
+                    <i class="fas fa-power-off"></i> OFF
+                </button>
+                <h2>M2</h2>
+                <button class="btn btn-success control-buttons" onclick="controlDevice('motor2', 'on')">
+                    <i class="fas fa-lightbulb"></i> ON
+                </button>
+                <button class="btn btn-danger control-buttons" onclick="controlDevice('motor2', 'off')">
+                    <i class="fas fa-power-off"></i> OFF
+                </button>
+                <h2>M3</h2>
+                <button class="btn btn-success control-buttons" onclick="controlDevice('motor3', 'on')">
+                    <i class="fas fa-lightbulb"></i> ON
+                </button>
+                <button class="btn btn-danger control-buttons" onclick="controlDevice('motor3', 'off')">
+                    <i class="fas fa-power-off"></i> OFF
+                </button>
+            </div>
+            <div class="col-sm-6">
+                <h2>Moteur M1</h2>
+                <button class="btn btn-success control-buttons" onclick="controlDevice('motor1', 'on')">
+                    <i class="fas fa-lightbulb"></i> ON
+                </button>
+                <button class="btn btn-danger control-buttons" onclick="controlDevice('motor1', 'off')">
+                    <i class="fas fa-power-off"></i> OFF
+                </button>
+                <h2>Moteur M2</h2>
+                <button class="btn btn-success control-buttons" onclick="controlDevice('motor2', 'on')">
+                    <i class="fas fa-lightbulb"></i> ON
+                </button>
+                <button class="btn btn-danger control-buttons" onclick="controlDevice('motor2', 'off')">
+                    <i class="fas fa-power-off"></i> OFF
+                </button>
+                <h2>Moteur M3</h2>
+                <button class="btn btn-success control-buttons" onclick="controlDevice('motor3', 'on')">
+                    <i class="fas fa-lightbulb"></i> ON
+                </button>
+                <button class="btn btn-danger control-buttons" onclick="controlDevice('motor3', 'off')">
+                    <i class="fas fa-power-off"></i> OFF
+                </button>
+            </div>
+            <div class="col-sm-3">
+                <h2>Moteur M1</h2>
+                <button class="btn btn-success control-buttons" onclick="controlDevice('motor1', 'on')">
+                    <i class="fas fa-lightbulb"></i> ON
+                </button>
+                <button class="btn btn-danger control-buttons" onclick="controlDevice('motor1', 'off')">
+                    <i class="fas fa-power-off"></i> OFF
+                </button>
+                <h2>Moteur M2</h2>
+                <button class="btn btn-success control-buttons" onclick="controlDevice('motor2', 'on')">
+                    <i class="fas fa-lightbulb"></i> ON
+                </button>
+                <button class="btn btn-danger control-buttons" onclick="controlDevice('motor2', 'off')">
+                    <i class="fas fa-power-off"></i> OFF
+                </button>
+                <h2>Moteur M3</h2>
+                <button class="btn btn-success control-buttons" onclick="controlDevice('motor3', 'on')">
+                    <i class="fas fa-lightbulb"></i> ON
+                </button>
+                <button class="btn btn-danger control-buttons" onclick="controlDevice('motor3', 'off')">
+                    <i class="fas fa-power-off"></i> OFF
+                </button>
+            </div>
+        </div>
+        <div class="row mt-5">
+            <div class="col-md-6 text-center">
+                <h2>Valeur actuelle: <span id="valueDisplay">{{ value }}</span></h2>
+            </div>
+            <div class="col-md-6 text-center">
+                <h2>État de la broche d'entrée: <span id="inputStateDisplay">Unknown</span></h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery, Bootstrap, and Custom JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+</body>
+</html>

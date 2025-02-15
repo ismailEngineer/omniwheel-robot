@@ -1,16 +1,16 @@
 document.addEventListener('DOMContentLoaded', function () {
-    
     function controlDevice(device, state) {
-        console.log("Controlling pins Raspberry PI");
+        console.log("controlDevice called with device:", device, "state:", state);
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "/control", true);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.onreadystatechange = function () {
             if (xhr.readyState == 4 && xhr.status == 200) {
-                console.log(xhr.responseText);
+                console.log("Response from server:", xhr.responseText);
             }
         };
         var data = JSON.stringify({device: device, state: state});
+        console.log("Sending data:", data);
         xhr.send(data);
     }
 
@@ -59,4 +59,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     setInterval(fetchValue, 1000); // Met à jour la valeur toutes les secondes
     setInterval(fetchInputState, 1000); // Met à jour l'état de la broche d'entrée toutes les secondes
+
+    window.controlDevice = controlDevice;
 });
