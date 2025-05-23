@@ -56,9 +56,9 @@ void loop() {
 
 
   // Tourne les moteurs pendant 1 seconde en avant
-//  analogWrite(pwm1A, 150); analogWrite(pwm1B, 0);
-//  analogWrite(pwm2A, 150); analogWrite(pwm2B, 0);
-//  analogWrite(pwm3A, 150); analogWrite(pwm3B, 0);
+  analogWrite(pwm1A, 150); analogWrite(pwm1B, 0);
+  analogWrite(pwm2A, 150); analogWrite(pwm2B, 0);
+  analogWrite(pwm3A, 150); analogWrite(pwm3B, 0);
 
   delay(1000); // Laisser tourner pendant 1 seconde
 
