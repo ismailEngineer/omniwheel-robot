@@ -68,23 +68,25 @@ void setup() {
   ticks1 = 0;
   ticks2 = 0;
   ticks3 = 0;
+
+  stopAllMotors();
 }
 
 void loop() {
 
 
-  // Tourne les moteurs pendant 1 seconde en avant
-  if (triggerMotor) {
-  turnM1(50,-1);
-  turnM2(50,-1);
-  turnM3(50,-1);
-  delay(5); // Laisser tourner pendant 1 seconde
-  }
-  else {
-    // Stoppe les moteurs
-  stopAllMotors();
-  delay(5); // Laisser tourner pendant 1 seconde
-  }
+//  // Tourne les moteurs pendant 1 seconde en avant
+//  if (triggerMotor) {
+//  turnM1(50,-1);
+//  turnM2(50,-1);
+//  turnM3(50,-1);
+//  delay(5); // Laisser tourner pendant 1 seconde
+//  }
+//  else {
+//    // Stoppe les moteurs
+//  stopAllMotors();
+//  delay(5); // Laisser tourner pendant 1 seconde
+//  }
   
   // Calcul des tours
   float tours1 = (float)ticks1 / TICKS_PER_REV;
@@ -211,9 +213,9 @@ void parseCommand(String cmd) {
   Serial.print("M2 = "); Serial.println(m2_speed);
   Serial.print("M3 = "); Serial.println(m3_speed);
 
-  if (m1_speed) turnM1(m1_speed, 1); else turnM1(-m1_speed, -1);
-  if (m1_speed) turnM1(m2_speed, 1); else turnM1(-m2_speed, -1);
-  if (m1_speed) turnM1(m3_speed, 1); else turnM1(-m3_speed, -1);
+  if (m1_speed >= 0) turnM1(m1_speed, 1); else turnM1(-m1_speed, -1);
+  if (m2_speed >= 0) turnM2(m2_speed, 1); else turnM2(-m2_speed, -1);
+  if (m3_speed >= 0) turnM3(m3_speed, 1); else turnM3(-m3_speed, -1);
 }
 
 
