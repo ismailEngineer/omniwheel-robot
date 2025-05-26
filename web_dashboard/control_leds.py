@@ -10,6 +10,7 @@ output_pins = [led_pin] #
 button_pin = 17
 input_pins = [button_pin] # 
 bus = None
+serial_object = None
 
 def configurationGpioFN():
     # Configuration des GPIO
@@ -19,6 +20,7 @@ def configurationGpioFN():
     input_pins = [button_pin] # 
     init_all()
     bus = init_i2c(1) # indicates /dev/ic2-1
+    serial_object = init_serial('/dev/ttyUSB0')
     setup_GPIOs_OUT(output_pins)
     setup_GPIOs_IN(input_pins) 
 
@@ -52,10 +54,12 @@ def control():
     if (device == 'motor1' or  device == 'motor2' or  device == 'motor3') and args.env == "raspberry":
         if state == 'on':
             turn_on_output_gpio(led_pin)
-            sent_message_i2c(bus,arduino_addr,0x10)
+            send_message_serial(serial_object,b'M1:100;M2:-100;M3:50\n')
+            #sent_message_i2c(bus,arduino_addr,0x10)
         else:
             turn_off_output_gpio(led_pin)
-            sent_message_i2c(bus,arduino_addr,0x0)
+            send_message_serial(serial_object,b'M1:0;M2:-0;M3:0\n')
+            #sent_message_i2c(bus,arduino_addr,0x0)
 
     value_to_display += 1
     
