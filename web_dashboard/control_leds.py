@@ -13,6 +13,7 @@ bus = None
 serial_object = None
 
 def configurationGpioFN():
+    global serial_object
     # Configuration des GPIO
     led_pin = 18
     output_pins = [led_pin] # 
@@ -47,7 +48,7 @@ def index():
 
 @app.route('/control', methods=['POST'])
 def control():
-    global value_to_display
+    global value_to_display,serial_object
     data, device, state = get_request()
     print(f"ARGS : {args.env}")
     
