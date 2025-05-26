@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
 from smbus import SMBus
-
+import serial
+import time
 
 def init_all():
     GPIO.setmode(GPIO.BCM)
@@ -39,3 +40,18 @@ def get_input_value(gpio_num):
 
 def sent_message_i2c(bus,addr, message):
     bus.write_byte(addr, message) # switch it on
+
+
+def init_serial(serial_adress):
+    ser = serial.Serial(serial_adress, 9600)
+    time.sleep(0.5)
+    return ser
+
+
+def close_serial(ser_obj):
+    ser_obj.close()
+
+def send_message_serial(ser_obj,message):
+    ser_obj.write(message)
+    time.sleep(0.5)
+

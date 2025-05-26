@@ -41,7 +41,7 @@ def get_request():
 
 @app.route('/')
 def index():
-    return render_template('refactor.html')
+    return render_template('index.html')
 
 @app.route('/control', methods=['POST'])
 def control():
