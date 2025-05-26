@@ -55,7 +55,7 @@ def control():
     if (device == 'motor1' or  device == 'motor2' or  device == 'motor3') and args.env == "raspberry":
         if state == 'on':
             turn_on_output_gpio(led_pin)
-            send_message_serial(serial_object,b'M1:100;M2:-100;M3:50\n')
+            send_message_serial(serial_object,b'M1:-100;M2:100;M3:100\n')
             #sent_message_i2c(bus,arduino_addr,0x10)
         else:
             turn_off_output_gpio(led_pin)
