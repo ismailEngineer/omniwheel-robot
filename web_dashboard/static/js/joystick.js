@@ -27,6 +27,12 @@ zone.addEventListener('mousedown', (event) => {
         const normX = x / maxRadius;
         const normY = -y / maxRadius; // inversé pour avoir Y positif vers le haut
         console.log("Joystick X:", normX.toFixed(2), "Y:", normY.toFixed(2));
+
+        fetch('/joystick', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ x: normX, y: normY })
+        });
     };
 
     const handleMouseUp = () => {
@@ -39,6 +45,12 @@ zone.addEventListener('mousedown', (event) => {
 
         // Envoyer valeurs nulles
         console.log("Joystick relâché → X: 0, Y: 0");
+        // Stop
+        fetch('/joystick', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ x: 0, y: 0 })
+        });
     };
 
     document.addEventListener('mousemove', handleMouseMove);
