@@ -51,11 +51,16 @@ def control():
     global value_to_display,serial_object
     data, device, state = get_request()
     print(f"ARGS : {args.env}")
-    
+
     if (device == 'motor1' or  device == 'motor2' or  device == 'motor3') and args.env == "raspberry":
         if state == 'on':
             turn_on_output_gpio(led_pin)
-            send_message_serial(serial_object,b'M1:-100;M2:100;M3:100\n')
+            if device == 'motor1': 
+                move_forward(serial_object,100)
+            elif device == 'motor2':
+                move_backward(serial_object,100)
+            elif device == 'motor3':
+                turn_right(serial_object,100)
             #sent_message_i2c(bus,arduino_addr,0x10)
         else:
             turn_off_output_gpio(led_pin)

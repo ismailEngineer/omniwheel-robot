@@ -55,3 +55,19 @@ def send_message_serial(ser_obj,message):
     ser_obj.write(message)
     time.sleep(0.5)
 
+
+def move_forward(ser_obj,velocity):
+    print("Moving Forward ...")
+    send_message_serial(ser_obj,b'M1:0;M2:'+str(velocity)+';M3:'+str(velocity)+'\n')
+
+def move_backward(ser_obj,velocity):
+    print("Moving Backward ...")
+    send_message_serial(ser_obj,b'M1:0;M2:'+str(-velocity)+';M3:'+str(-velocity)+'\n')
+
+def turn_right(ser_obj,velocity):
+    print("Turning Right ...")
+    send_message_serial(ser_obj,b'M1:'+str(-velocity)+';M2:'+str(-velocity)+';M3:'+str(velocity)+'\n')
+
+def turn_left(ser_obj,velocity):
+    print("Turning Right ...")
+    send_message_serial(ser_obj,b'M1:'+str(velocity)+';M2:'+str(velocity)+';M3:'+str(-velocity)+'\n')
