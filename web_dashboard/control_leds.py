@@ -104,7 +104,7 @@ def joystick():
 
     # M3 (240°)
     #W3 = (math.sqrt(3)/2)*x - 0.5*y
-    W2 = -0.5*x + (math.sqrt(3)/2)*y
+    W3 = -0.5*x + (math.sqrt(3)/2)*y
 
     # Affiche ou envoie à ton robot
     print(f'X={x:.2f} Y={y:.2f}')
