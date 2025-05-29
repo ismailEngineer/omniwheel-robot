@@ -120,7 +120,7 @@ def joystick():
 
     return jsonify({"m1": W1, "m2": W2, "m3": W3})
 
-def scale_motor_speeds(w1, w2, w3, min_speed=70, max_speed=220):
+def scale_motor_speeds(w1, w2, w3, min_speed=10, max_speed=220):
     # Trouver le plus grand coefficient absolu
     max_coef = max(abs(w1), abs(w2), abs(w3))
 
