@@ -60,7 +60,7 @@ def control():
             elif device == 'motor2':
                 move_backward(serial_object,150)
             elif device == 'motor3':
-                turn_right(serial_object,70)
+                turn_right(serial_object,100)
             #sent_message_i2c(bus,arduino_addr,0x10)
         else:
             turn_off_output_gpio(led_pin)
