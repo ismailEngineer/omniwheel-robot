@@ -56,11 +56,11 @@ def control():
         if state == 'on':
             turn_on_output_gpio(led_pin)
             if device == 'motor1': 
-                move_forward(serial_object,100)
+                move_forward(serial_object,150)
             elif device == 'motor2':
-                move_backward(serial_object,100)
+                move_backward(serial_object,150)
             elif device == 'motor3':
-                turn_right(serial_object,100)
+                turn_right(serial_object,70)
             #sent_message_i2c(bus,arduino_addr,0x10)
         else:
             turn_off_output_gpio(led_pin)
