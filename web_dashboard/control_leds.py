@@ -95,13 +95,16 @@ def joystick():
 
     # KINEMATIQUE INVERSE
     # M1 (0°)
-    W1 = y
+    #W1 = y
+    W1 = -x
 
     # M2 (120°)
-    W2 = - (math.sqrt(3)/2)*x - 0.5*y
+    #W2 = - (math.sqrt(3)/2)*x - 0.5*y
+    W2 = 0.5*x + (math.sqrt(3)/2)*y
 
     # M3 (240°)
-    W3 = (math.sqrt(3)/2)*x - 0.5*y
+    #W3 = (math.sqrt(3)/2)*x - 0.5*y
+    W2 = -0.5*x + (math.sqrt(3)/2)*y
 
     # Affiche ou envoie à ton robot
     print(f'X={x:.2f} Y={y:.2f}')
