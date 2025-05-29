@@ -58,20 +58,20 @@ def send_message_serial(ser_obj,message):
 
 def move_forward(ser_obj,velocity):
     print("Moving Forward ...")
-    message = str('M1:0;M2:'+str(velocity)+';M3:'+str(velocity)+'\n')
-    message = b''+message
+    message = 'M1:0;M2:'+str(velocity)+';M3:'+str(velocity)+'\n'
+    message = b''+ bytes(message)
     send_message_serial(ser_obj,message)
 
 def move_backward(ser_obj,velocity):
     print("Moving Backward ...")
-    message = str('M1:0;M2:'+str(-velocity)+';M3:'+str(-velocity)+'\n')
-    message = b''+message
+    message = 'M1:0;M2:'+str(-velocity)+';M3:'+str(-velocity)+'\n'
+    message = b''+ bytes(message)
     send_message_serial(ser_obj,message)
 
 def turn_right(ser_obj,velocity):
     print("Turning Right ...")
     message = str('M1:'+str(-velocity)+';M2:'+str(-velocity)+';M3:'+str(velocity)+'\n')
-    message = b''+message
+    message = b''+ bytes(message)
     send_message_serial(ser_obj,message)
 
 def turn_left(ser_obj,velocity):
