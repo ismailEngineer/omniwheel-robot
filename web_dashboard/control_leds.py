@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify
 import sys
 import argparse
 import sys
+import math
 
 app = Flask(__name__)
 
@@ -85,6 +86,63 @@ def read_input():
         return jsonify({'input_state': input_state})
     else :
         return jsonify({'input_state': "-1"})
+    
+@app.route('/joystick', methods=['POST'])
+def joystick():
+    data = request.get_json()
+    x = data['x']
+    y = data['y']
+
+    # KINEMATIQUE INVERSE
+    # M1 (0°)
+    W1 = y
+
+    # M2 (120°)
+    W2 = - (math.sqrt(3)/2)*x - 0.5*y
+
+    # M3 (240°)
+    W3 = (math.sqrt(3)/2)*x - 0.5*y
+
+    # Affiche ou envoie à ton robot
+    print(f'X={x:.2f} Y={y:.2f}')
+    print(f'M1={W1:.2f} M2={W2:.2f} M3={W3:.2f}')
+
+    m1, m2, m3 = scale_motor_speeds(W1, W2, W3)
+
+    print(f"Vitesses moteurs: M1={m1:.0f}, M2={m2:.0f}, M3={m3:.0f}")
+
+    turnMotors(serial_object,m1,m2,m3)
+
+    # ➕ à adapter : envoyer les vitesses au robot via serial, socket, etc.
+
+    return jsonify({"m1": W1, "m2": W2, "m3": W3})
+
+def scale_motor_speeds(w1, w2, w3, min_speed=70, max_speed=220):
+    # Trouver le plus grand coefficient absolu
+    max_coef = max(abs(w1), abs(w2), abs(w3))
+
+    # Éviter division par 0 (joystick au centre)
+    if max_coef == 0:
+        return 0, 0, 0
+
+    # Calcul du facteur d'échelle
+    scale = max_speed / max_coef
+
+    # Appliquer l’échelle et clipper les vitesses minimales
+    def scale_and_clip(w):
+        if w == 0:
+            return 0
+        scaled = w * scale
+        # appliquer vitesse min tout en gardant le signe
+        if abs(scaled) < min_speed:
+            return min_speed * (1 if scaled > 0 else -1)
+        return scaled
+
+    return (
+        scale_and_clip(w1),
+        scale_and_clip(w2),
+        scale_and_clip(w3)
+    )
 
 if __name__ == '__main__':
     print(sys.argv)

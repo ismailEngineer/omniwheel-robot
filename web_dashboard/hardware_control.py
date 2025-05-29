@@ -80,3 +80,8 @@ def turn_left(ser_obj,velocity):
     message = 'M1:'+str(velocity)+';M2:'+str(velocity)+';M3:'+str(-velocity)+'\n'
     message = message.encode('utf-8')
     send_message_serial(ser_obj,message)
+
+def turnMotors(ser_obj,v1,v2,v3):
+    message = 'M1:'+str(v1)+';M2:'+str(v2)+';M3:'+str(v3)+'\n'
+    message = message.encode('utf-8')
+    send_message_serial(ser_obj,message)
