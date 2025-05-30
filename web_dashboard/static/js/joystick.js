@@ -32,6 +32,13 @@ zone.addEventListener('mousedown', (event) => {
         // Envoyer la position normalisée
         const normX = x / maxRadius;
         const normY = -y / maxRadius;
+
+        // Stop
+        fetch('/joystick', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ x: normX, y: normY })
+        });
         console.log("Joystick X:", normX.toFixed(2), "Y:", normY.toFixed(2));
     };
 
@@ -45,6 +52,13 @@ zone.addEventListener('mousedown', (event) => {
         // Recentrer visuellement
         joystick.style.left = `${(zoneRect.width - joystick.offsetWidth) / 2}px`;
         joystick.style.top = `${(zoneRect.height - joystick.offsetHeight) / 2}px`;
+
+        // Stop
+        fetch('/joystick', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ x: 0, y: 0 })
+        });
 
         // Envoyer retour au neutre
         console.log("Joystick relâché → X: 0, Y: 0");

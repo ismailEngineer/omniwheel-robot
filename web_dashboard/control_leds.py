@@ -114,7 +114,7 @@ def joystick():
 
     print(f"Vitesses moteurs: M1={m1:.0f}, M2={m2:.0f}, M3={m3:.0f}")
 
-    turnMotors(serial_object,m1,m2,m3)
+    #turnMotors(serial_object,m1,m2,m3)
 
     # ➕ à adapter : envoyer les vitesses au robot via serial, socket, etc.
 
