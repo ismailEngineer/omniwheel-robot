@@ -29,6 +29,7 @@ unsigned long lastTime = 0;
 const int TICKS_PER_REV = 445;
 const float DIAMETRE_ROUE = 0.055; // en mètres
 const float perimetre = PI * DIAMETRE_ROUE;
+const int CONTROL_PERIOD_MS = 50; // Période d’échantillonnage (50 ms)
 
 float distance1, vitesse1;   
 float distance2, vitesse2;
@@ -36,6 +37,15 @@ float distance3, vitesse3;
 
 bool triggerMotor = false;
 
+float integral_error = 0;
+float target_vitesse1 = 0.4;
+
+float pwm_min = 50;
+
+
+float Kp = 500;      // à régler
+float Ki = 600.0;      // à régler
+float k_ff = 50;
 
 String inputString = "";
 bool stringComplete = false;
@@ -96,7 +106,7 @@ void loop() {
 
   unsigned long currentTime = millis();
   
-  if (currentTime - lastTime >= 100) { // toutes les 100 ms
+  if (currentTime - lastTime >= CONTROL_PERIOD_MS) { // toutes les 100 ms
     
     float tours1_v = (float)ticks1_v / TICKS_PER_REV;
     float tours2_v = (float)ticks2_v / TICKS_PER_REV;
@@ -104,18 +114,44 @@ void loop() {
   
     
     distance1 = tours1_v * perimetre;
-    vitesse1 = distance1 / 0.1; // m/s
+    vitesse1 = distance1 / 0.05; // m/s
     
     distance2 = tours2_v * perimetre;
-    vitesse2 = distance2 / 0.1; // m/s
+    vitesse2 = distance2 / 0.05; // m/s
     
     distance3 = tours3_v * perimetre;
-    vitesse3 = distance3 / 0.1; // m/s
+    vitesse3 = distance3 / 0.05; // m/s
+
+    float error = target_vitesse1 - vitesse1;
+    integral_error += error * 0.05;
+
+    float feedforward = k_ff * target_vitesse1;
+
+    // PI Controller
+    float output = Kp * error + Ki * integral_error;
+    
+//    // Ajout seuil minimal de démarrage
+//    if (target_vitesse1 != 0 && abs(output) < pwm_min) {
+//      output = pwm_min * (output > 0 ? 1 : -1);
+//    }
+
+    int pwm_value = constrain(abs(output), 0, 255);
+
+    
+
+    if (output >= 0) turnM1(pwm_value, 1); else turnM1(-pwm_value, -1);
 
 
     ticks1_v = 0; // reset pour le prochain intervalle
     ticks2_v = 0; // reset pour le prochain intervalle
     ticks3_v = 0; // reset pour le prochain intervalle
+
+    // Debug
+    Serial.print("vitesse1: "); Serial.print(vitesse1);
+    Serial.print(" | output: "); Serial.print(output);
+    Serial.print(" | PWM: "); Serial.print(pwm_value);
+    Serial.print(" | Target: "); Serial.println(target_vitesse1);
+    
     lastTime = currentTime;
 }
   // Affiche les résultats
@@ -175,27 +211,27 @@ void stopAllMotors(){
 
 // === FONCTIONS D'INTERRUPTION ===
 
-void serialEvent() {
-//  if (Serial.available()) {
-//    char c = Serial.read(); // on lit 1 caractère
-//    if (c == 'z') triggerMotor = true;
-//    else if (c == 's') triggerMotor = false;
+//void serialEvent() {
+////  if (Serial.available()) {
+////    char c = Serial.read(); // on lit 1 caractère
+////    if (c == 'z') triggerMotor = true;
+////    else if (c == 's') triggerMotor = false;
+////  }
+//
+//  while (Serial.available()) {
+//    char inChar = (char)Serial.read();
+//    if (inChar == '\n') {
+//      stringComplete = true;
+//    } else {
+//      inputString += inChar;
+//    }
+//   }
+//  if (stringComplete) {
+//    parseCommand(inputString);
+//    inputString = "";
+//    stringComplete = false;
 //  }
-
-  while (Serial.available()) {
-    char inChar = (char)Serial.read();
-    if (inChar == '\n') {
-      stringComplete = true;
-    } else {
-      inputString += inChar;
-    }
-   }
-  if (stringComplete) {
-    parseCommand(inputString);
-    inputString = "";
-    stringComplete = false;
-  }
-}
+//}
 
 void parseCommand(String cmd) {
   int m1_speed = 0, m2_speed = 0, m3_speed = 0;
