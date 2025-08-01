@@ -6,13 +6,13 @@ const int pwm1B = 10;
 const int pwm2A = 7;
 const int pwm2B = 8;
 // Moteur 3 --> Gauche
-const int pwm3A = 5;
-const int pwm3B = 6;
+const int pwm3A = 6;
+const int pwm3B = 5;
 
 // Encodeurs
 const int encA1 = 2, encB1 = 3;
 const int encA2 = 18, encB2 = 19;
-const int encA3 = 20, encB3 = 21;
+const int encA3 = 21, encB3 = 20;
 
 // Compteurs de ticks
 volatile long ticks1 = 0;
@@ -37,15 +37,16 @@ float distance3, vitesse3;
 
 bool triggerMotor = false;
 
+
+
 float integral_error = 0;
-float target_vitesse1 = 0.4;
-
+float target_vitesse1 = -0.5,target_vitesse2 = 0.4,target_vitesse3 = 0.4;
 float pwm_min = 50;
-
-
 float Kp = 500;      // à régler
 float Ki = 600.0;      // à régler
 float k_ff = 50;
+float integral_error_1 = 0,integral_error_2 = 0,integral_error_3 = 0;
+int pwm_value_1, pwm_value_2, pwm_value_3;
 
 String inputString = "";
 bool stringComplete = false;
@@ -113,7 +114,7 @@ void loop() {
     float tours3_v = (float)ticks3_v / TICKS_PER_REV;
   
     
-    distance1 = tours1_v * perimetre;
+    distance1 = tours1_v * perimetre; 
     vitesse1 = distance1 / 0.05; // m/s
     
     distance2 = tours2_v * perimetre;
@@ -122,36 +123,50 @@ void loop() {
     distance3 = tours3_v * perimetre;
     vitesse3 = distance3 / 0.05; // m/s
 
-    float error = target_vitesse1 - vitesse1;
-    integral_error += error * 0.05;
+//    float error = target_vitesse1 - vitesse1;
+//    integral_error += error * 0.05;
+//
+//    float feedforward = k_ff * target_vitesse1;
+//
+//    // PI Controller
+//    float output = Kp * error + Ki * integral_error;
+//    
+////    // Ajout seuil minimal de démarrage
+////    if (target_vitesse1 != 0 && abs(output) < pwm_min) {
+////      output = pwm_min * (output > 0 ? 1 : -1);
+////    }
+//
+//    int pwm_value = constrain(abs(output), 0, 255);
 
-    float feedforward = k_ff * target_vitesse1;
-
-    // PI Controller
-    float output = Kp * error + Ki * integral_error;
     
-//    // Ajout seuil minimal de démarrage
-//    if (target_vitesse1 != 0 && abs(output) < pwm_min) {
-//      output = pwm_min * (output > 0 ? 1 : -1);
-//    }
 
-    int pwm_value = constrain(abs(output), 0, 255);
+    // if (output >= 0) turnM1(pwm_value, 1); else turnM1(-pwm_value, -1);
 
-    
+    pwm_value_1 = controller_pid(vitesse1,target_vitesse1,Kp,Ki,&integral_error_1);
+    pwm_value_2 = controller_pid(vitesse2,target_vitesse2,Kp,Ki,&integral_error_2);
+    pwm_value_3 = controller_pid(vitesse3,target_vitesse3,Kp,Ki,&integral_error_3);
 
-    if (output >= 0) turnM1(pwm_value, 1); else turnM1(-pwm_value, -1);
-
+    if (pwm_value_1 >= 0) turnM1(pwm_value_1, 1); else turnM1(-pwm_value_1, -1);
+    if (pwm_value_2 >= 0) turnM2(pwm_value_2, 1); else turnM2(-pwm_value_2, -1);
+    if (pwm_value_3 >= 0) turnM3(pwm_value_3, 1); else turnM3(-pwm_value_3, -1);
 
     ticks1_v = 0; // reset pour le prochain intervalle
     ticks2_v = 0; // reset pour le prochain intervalle
     ticks3_v = 0; // reset pour le prochain intervalle
 
     // Debug
+//    Serial.print("vitesse1: "); Serial.print(vitesse1);
+//    Serial.print(" | output: "); Serial.print(output);
+//    Serial.print(" | PWM: "); Serial.print(pwm_value);
+//    Serial.print(" | Target: "); Serial.println(target_vitesse1);
+
     Serial.print("vitesse1: "); Serial.print(vitesse1);
-    Serial.print(" | output: "); Serial.print(output);
-    Serial.print(" | PWM: "); Serial.print(pwm_value);
-    Serial.print(" | Target: "); Serial.println(target_vitesse1);
+    Serial.print("| vitesse2: "); Serial.print(vitesse2);
+    Serial.print("| vitesse3: "); Serial.println(vitesse3);
     
+//    Serial.print(" | PWM: "); Serial.print(pwm_value_1);Serial.print(" | Target: "); Serial.println(target_vitesse1);
+//    Serial.print(" | PWM: "); Serial.print(pwm_value_2);Serial.print(" | Target: "); Serial.println(target_vitesse2);
+//    Serial.print(" | PWM: "); Serial.print(pwm_value_3);Serial.print(" | Target: "); Serial.println(target_vitesse3);
     lastTime = currentTime;
 }
   // Affiche les résultats
@@ -174,7 +189,20 @@ void loop() {
   delay(10); // Pause avant prochaine mesure (boucle)
 }
 
+int controller_pid(float v, float target_v, float kp_v, float ki_v, float* integral_error)
+{
+    float error = target_v - v;
+    *integral_error += error * 0.05;
 
+    // PI Controller
+    float output = kp_v * error + ki_v * (*integral_error);
+
+    int pwm_value = constrain(abs(output), 0, 255);
+    
+    if (output >= 0) pwm_value = pwm_value; else pwm_value *= -1;
+    
+    return pwm_value;
+}
 
 void turnM1(int velocity, int dir){
   if (dir > 0 ) {
@@ -211,27 +239,27 @@ void stopAllMotors(){
 
 // === FONCTIONS D'INTERRUPTION ===
 
-//void serialEvent() {
-////  if (Serial.available()) {
-////    char c = Serial.read(); // on lit 1 caractère
-////    if (c == 'z') triggerMotor = true;
-////    else if (c == 's') triggerMotor = false;
-////  }
-//
-//  while (Serial.available()) {
-//    char inChar = (char)Serial.read();
-//    if (inChar == '\n') {
-//      stringComplete = true;
-//    } else {
-//      inputString += inChar;
-//    }
-//   }
-//  if (stringComplete) {
-//    parseCommand(inputString);
-//    inputString = "";
-//    stringComplete = false;
+void serialEvent() {
+//  if (Serial.available()) {
+//    char c = Serial.read(); // on lit 1 caractère
+//    if (c == 'z') triggerMotor = true;
+//    else if (c == 's') triggerMotor = false;
 //  }
-//}
+
+  while (Serial.available()) {
+    char inChar = (char)Serial.read();
+    if (inChar == '\n') {
+      stringComplete = true;
+    } else {
+      inputString += inChar;
+    }
+   }
+  if (stringComplete) {
+    parseCommand(inputString);
+    inputString = "";
+    stringComplete = false;
+  }
+}
 
 void parseCommand(String cmd) {
   int m1_speed = 0, m2_speed = 0, m3_speed = 0;
