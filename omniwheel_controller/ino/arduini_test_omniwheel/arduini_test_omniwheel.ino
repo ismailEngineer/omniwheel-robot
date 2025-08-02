@@ -38,10 +38,10 @@ float distance3, vitesse3;
 
 
 float integral_error = 0;
-float target_vitesse1 = 0.0,target_vitesse2 = 0.0,target_vitesse3 = 0.3;
+float target_vitesse1 = 0.0,target_vitesse2 = 0.0,target_vitesse3 = 0.0;
 float pwm_min = 50;
-float Kp = 700;      // à régler
-float Ki = 600.0;      // à régler
+float Kp = 600;      // à régler
+float Ki = 1700.0;      // à régler
 float k_ff = 50;
 float integral_error_1 = 0,integral_error_2 = 0,integral_error_3 = 0;
 int pwm_value_1, pwm_value_2, pwm_value_3;
