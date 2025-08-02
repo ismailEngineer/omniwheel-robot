@@ -35,14 +35,12 @@ float distance1, vitesse1;
 float distance2, vitesse2;
 float distance3, vitesse3;
 
-bool triggerMotor = false;
-
 
 
 float integral_error = 0;
-float target_vitesse1 = -0.5,target_vitesse2 = 0.4,target_vitesse3 = 0.4;
+float target_vitesse1 = 0.0,target_vitesse2 = 0.0,target_vitesse3 = 0.3;
 float pwm_min = 50;
-float Kp = 500;      // à régler
+float Kp = 700;      // à régler
 float Ki = 600.0;      // à régler
 float k_ff = 50;
 float integral_error_1 = 0,integral_error_2 = 0,integral_error_3 = 0;
@@ -50,6 +48,9 @@ int pwm_value_1, pwm_value_2, pwm_value_3;
 
 String inputString = "";
 bool stringComplete = false;
+
+bool robot_ready;
+bool triggerMotor = false;
 
 void setup() {
   Serial.begin(9600);
@@ -80,6 +81,9 @@ void setup() {
   ticks2 = 0;
   ticks3 = 0;
 
+  robot_ready = false;
+  triggerMotor = false;
+  
   stopAllMotors();
 }
 
@@ -141,14 +145,17 @@ void loop() {
     
 
     // if (output >= 0) turnM1(pwm_value, 1); else turnM1(-pwm_value, -1);
+    if (robot_ready) 
+    {
+          pwm_value_1 = controller_pid(vitesse1,target_vitesse1,Kp,Ki,&integral_error_1);
+          pwm_value_2 = controller_pid(vitesse2,target_vitesse2,Kp,Ki,&integral_error_2);
+          pwm_value_3 = controller_pid(vitesse3,target_vitesse3,Kp,Ki,&integral_error_3);
+      
+          if (pwm_value_1 >= 0) turnM1(pwm_value_1, 1); else turnM1(-pwm_value_1, -1);
+          if (pwm_value_2 >= 0) turnM2(pwm_value_2, 1); else turnM2(-pwm_value_2, -1);
+          if (pwm_value_3 >= 0) turnM3(pwm_value_3, 1); else turnM3(-pwm_value_3, -1);
+    }
 
-    pwm_value_1 = controller_pid(vitesse1,target_vitesse1,Kp,Ki,&integral_error_1);
-    pwm_value_2 = controller_pid(vitesse2,target_vitesse2,Kp,Ki,&integral_error_2);
-    pwm_value_3 = controller_pid(vitesse3,target_vitesse3,Kp,Ki,&integral_error_3);
-
-    if (pwm_value_1 >= 0) turnM1(pwm_value_1, 1); else turnM1(-pwm_value_1, -1);
-    if (pwm_value_2 >= 0) turnM2(pwm_value_2, 1); else turnM2(-pwm_value_2, -1);
-    if (pwm_value_3 >= 0) turnM3(pwm_value_3, 1); else turnM3(-pwm_value_3, -1);
 
     ticks1_v = 0; // reset pour le prochain intervalle
     ticks2_v = 0; // reset pour le prochain intervalle
@@ -163,6 +170,10 @@ void loop() {
     Serial.print("vitesse1: "); Serial.print(vitesse1);
     Serial.print("| vitesse2: "); Serial.print(vitesse2);
     Serial.print("| vitesse3: "); Serial.println(vitesse3);
+
+//    Serial.print("target_vitesse1: "); Serial.print(target_vitesse1);
+//    Serial.print("| target_vitesse2: "); Serial.print(target_vitesse2);
+//    Serial.print("| target_vitesse3: "); Serial.println(target_vitesse3);
     
 //    Serial.print(" | PWM: "); Serial.print(pwm_value_1);Serial.print(" | Target: "); Serial.println(target_vitesse1);
 //    Serial.print(" | PWM: "); Serial.print(pwm_value_2);Serial.print(" | Target: "); Serial.println(target_vitesse2);
@@ -191,17 +202,27 @@ void loop() {
 
 int controller_pid(float v, float target_v, float kp_v, float ki_v, float* integral_error)
 {
-    float error = target_v - v;
-    *integral_error += error * 0.05;
-
-    // PI Controller
-    float output = kp_v * error + ki_v * (*integral_error);
-
-    int pwm_value = constrain(abs(output), 0, 255);
+    if (target_v == 0)
+    {
+       *integral_error = 0;
+       return 0;
+    }
     
-    if (output >= 0) pwm_value = pwm_value; else pwm_value *= -1;
-    
-    return pwm_value;
+    else 
+    {
+      float error = target_v - v;
+      *integral_error += error * 0.05;
+      
+      // PI Controller
+      float output = kp_v * error + ki_v * (*integral_error);
+  
+      int pwm_value = constrain(abs(output), 0, 255);
+      
+      if (output >= 0) pwm_value = pwm_value; else pwm_value *= -1;
+      
+      return pwm_value;
+    }
+
 }
 
 void turnM1(int velocity, int dir){
@@ -240,13 +261,12 @@ void stopAllMotors(){
 // === FONCTIONS D'INTERRUPTION ===
 
 void serialEvent() {
-//  if (Serial.available()) {
-//    char c = Serial.read(); // on lit 1 caractère
-//    if (c == 'z') triggerMotor = true;
-//    else if (c == 's') triggerMotor = false;
-//  }
+  if ((Serial.available()) and (robot_ready == false)) {
+    char c = Serial.read(); // on lit 1 caractère
+    if (c == 'z') robot_ready = true;
+  }
 
-  while (Serial.available()) {
+  while (Serial.available() and (robot_ready)) {
     char inChar = (char)Serial.read();
     if (inChar == '\n') {
       stringComplete = true;
@@ -277,9 +297,14 @@ void parseCommand(String cmd) {
   Serial.print("M2 = "); Serial.println(m2_speed);
   Serial.print("M3 = "); Serial.println(m3_speed);
 
-  if (m1_speed >= 0) turnM1(m1_speed, 1); else turnM1(-m1_speed, -1);
-  if (m2_speed >= 0) turnM2(m2_speed, 1); else turnM2(-m2_speed, -1);
-  if (m3_speed >= 0) turnM3(m3_speed, 1); else turnM3(-m3_speed, -1);
+  target_vitesse1 = (float)m1_speed*0.01;
+  target_vitesse2 = (float)m2_speed*0.01;
+  target_vitesse3 = (float)m3_speed*0.01;
+
+
+//  if (m1_speed >= 0) turnM1(m1_speed, 1); else turnM1(-m1_speed, -1);
+//  if (m2_speed >= 0) turnM2(m2_speed, 1); else turnM2(-m2_speed, -1);
+//  if (m3_speed >= 0) turnM3(m3_speed, 1); else turnM3(-m3_speed, -1);
 }
 
 
