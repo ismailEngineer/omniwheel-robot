@@ -39,22 +39,22 @@ def generer_commande(V1, V2, V3):
     return f"M1:{(V1*100):.2f};M2:{(V2*100):.2f};M3:{(V3*100):.2f}\n"
 
 # Commandes de mouvement
-def avancer(v=0.2):  # m/s
+def avancer(v=0.4):  # m/s
     return generer_commande(*calcul_vitesses_moteurs(0, v, 0))
 
-def reculer(v=0.2):
+def reculer(v=0.4):
     return generer_commande(*calcul_vitesses_moteurs(0, -v, 0))
 
-def aller_droite(v=0.2):
+def aller_droite(v=0.4):
     return generer_commande(*calcul_vitesses_moteurs(v, 0, 0))
 
-def aller_gauche(v=0.2):
+def aller_gauche(v=0.4):
     return generer_commande(*calcul_vitesses_moteurs(-v, 0, 0))
 
-def rotation_gauche(w=1.3):  # rad/s
+def rotation_gauche(w=1.5):  # rad/s
     return generer_commande(*calcul_vitesses_moteurs(0, 0, w))
 
-def rotation_droite(w=1.3):
+def rotation_droite(w=1.5):
     return generer_commande(*calcul_vitesses_moteurs(0, 0, -w))
 
 def arret():
