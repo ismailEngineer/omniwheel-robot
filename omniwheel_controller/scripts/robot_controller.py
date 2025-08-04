@@ -1,12 +1,25 @@
 import numpy as np
+import threading
 import serial
 import time
+import socket
 
 
 # Distance du centre du robot aux roues (m)
 L = 0.13  # 13 cm
 sqrt3 = np.sqrt(3)
 
+# Threading : 
+lock = threading.Lock()
+    # Variables partagées
+v1, v2, v3 = 0.0, 0.0, 0.0
+    # Signal d'arrêt
+stop_event = threading.Event()
+
+
+# Socket config
+HOST = '0.0.0.0'  # Pour écouter sur toutes les IP de la Raspberry
+PORT = 5000
 
 def init_serial_arduino():
     ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
@@ -60,6 +73,24 @@ def rotation_droite(w=1.5):
 def arret():
     return generer_commande(0, 0, 0)
 
+# Initialisation Serial
+ser = init_serial_arduino()
+# Enable motor (SEND UART MESSAGE TO ARDUINO)
+enabe_motor_arduino(ser=ser)
+
+
+
+# Socket serveur
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server_socket.bind((HOST, PORT))
+server_socket.listen(1)
+
+
+print(f"Serveur en attente de connexion sur {HOST}:{PORT}...")
+conn, addr = server_socket.accept()
+print(f"Client connecté depuis {addr}")
+
+
 menu = {
     "1": ("Avancer", avancer),
     "2": ("Reculer", reculer),
@@ -70,37 +101,71 @@ menu = {
     "0": ("Stop", arret),
 }
 
+def lecture_vitesse():
+    global v1, v2, v3
+    while not stop_event.is_set():
+        if ser.in_waiting > 0:
+            line = ser.readline().decode('utf-8', errors='ignore').strip()
+            try:
+                parts = line.split("|")
+                v1_new = float(parts[0].split(":")[1].strip())
+                v2_new = float(parts[1].split(":")[1].strip())
+                v3_new = float(parts[2].split(":")[1].strip())
+                with lock:
+                    v1, v2, v3 = v1_new, v2_new, v3_new
+                    msg = f"{v1:.2f},{v2:.2f},{v3:.2f}\n"
+                conn.sendall(msg.encode())
+            except Exception as e:
+                print("Erreur parsing:", e)
+
+        
+        #time.sleep(0.1)  # 10 Hz
+
+# Lancement du thread
+thread = threading.Thread(target=lecture_vitesse)
+thread.start() 
+
 def afficher_menu():
     print("\n--- Commandes disponibles ---")
     for key, (desc, _) in menu.items():
         print(f"{key} - {desc}")
     print("q - Quitter")
 
-ser = init_serial_arduino()
-enabe_motor_arduino(ser=ser)
-while True:
-    afficher_menu()
-    choix = input("Entrez votre commande : ").strip().lower()
 
-    if choix in ("q", "quit"):
-        print("Fermeture...")
-        break
 
-    if choix in menu:
-        nom, fonction = menu[choix]
-        commande = fonction()
-        print(f"> Commande {nom} : {commande}")
-        send_message(ser,commande)
-        # ser.write((commande + '\n').encode('utf-8'))  # décommente pour envoyer en série
-    else:
-        print("Commande non reconnue.")
+try : 
+    while True:
+        afficher_menu()
+        choix = input("Entrez votre commande : ").strip().lower()
 
-# # Exemple d’utilisation
-# if __name__ == "__main__":
-#     ser = init_serial_arduino()
-#     print("Commande avancer :", send_message(ser,avancer()))
-#     print("Commande droite :", send_message(ser,aller_droite()))
-#     print("Commande gauche :", send_message(ser,aller_gauche()))
-#     print("Commande rotation gauche :", send_message(ser,rotation_gauche()))
-#     print("Commande rotation droite :", send_message(ser,rotation_droite()))
-#     print("Commande stop :", send_message(ser,arret()))
+        if choix in ("q", "quit"):
+            print("Fermeture...")
+            stop_event.set()
+            thread.join()
+            ser.close()
+            conn.close()
+            server_socket.close()
+            break
+
+        # with lock:
+        #     msg = f"{v1:.2f},{v2:.2f},{v3:.2f}\n"
+        # conn.sendall(msg.encode())
+        # time.sleep(0.1)  # 10 Hz
+
+        if choix in menu:
+            nom, fonction = menu[choix]
+            commande = fonction()
+            print(f"> Commande {nom} : {commande}")
+            send_message(ser,commande)
+
+        else:
+            print("Commande non reconnue.")
+
+except KeyboardInterrupt:
+    print("Arrêt demandé par l'utilisateur.")
+    stop_event.set()
+    thread.join()
+    ser.close()
+    conn.close()
+    server_socket.close()
+    print("Fermeture propre terminée.")
