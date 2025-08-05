@@ -111,9 +111,10 @@ def lecture_vitesse():
                 v1_new = float(parts[0].split(":")[1].strip())
                 v2_new = float(parts[1].split(":")[1].strip())
                 v3_new = float(parts[2].split(":")[1].strip())
+                timestamp = time.time()
                 with lock:
                     v1, v2, v3 = v1_new, v2_new, v3_new
-                    msg = f"{v1:.2f},{v2:.2f},{v3:.2f}\n"
+                    msg = f"{timestamp}{v1:.2f},{v2:.2f},{v3:.2f}\n"
                 conn.sendall(msg.encode())
             except Exception as e:
                 print("Erreur parsing:", e)
