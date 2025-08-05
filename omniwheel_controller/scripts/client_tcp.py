@@ -63,7 +63,7 @@ def update_odometry(x,y,theta,Vx,Vy,Wz,dt):
 
     return (x_new,y_new,theta_new)
 
-RASPBERRY_IP = '192.168.1.167'  # ← Remplace avec l'adresse IP réelle de la Raspberry
+RASPBERRY_IP = '192.168.1.33'  # ← Remplace avec l'adresse IP réelle de la Raspberry
 PORT = 5000
 
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -81,9 +81,20 @@ theta_table = []
 
 try:
     while True:
-        data = client_socket.recv(1024).decode().strip()
-        if data:
-            now_t, v1, v2, v3 = map(float, data.split(","))
+        
+        chunk = client_socket.recv(1024).decode()
+        if not chunk:
+            break
+        buffer += chunk
+
+        while '\n' in buffer:
+            line, buffer = buffer.split('\n', 1)
+            try : 
+                now_t, v1, v2, v3 = map(float, line.strip().split(","))
+            except ValueError:
+                print(f"⚠️ Ligne ignorée (mauvais format) : {line}")
+                continue
+
             if not first_timestamp : 
                 prec_t = now_t
                 first_timestamp = True
@@ -102,4 +113,4 @@ except KeyboardInterrupt:
     print("Déconnexion...")
     client_socket.close()
 
-plot_robot_trajectory(x_table,y_table,theta_table)
+#plot_robot_trajectory(x_table,y_table,theta_table)

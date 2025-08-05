@@ -101,7 +101,7 @@ menu = {
     "0": ("Stop", arret),
 }
 
-def lecture_vitesse():
+def lecture_vitesse_legacy():
     global v1, v2, v3
     while not stop_event.is_set():
         if ser.in_waiting > 0:
@@ -121,7 +121,51 @@ def lecture_vitesse():
 
         
         #time.sleep(0.1)  # 10 Hz
+def lecture_vitesse():
+    global v1, v2, v3, conn
+    serial_buffer = ""
 
+    while not stop_event.is_set():
+        try:
+            if ser.in_waiting > 0:
+                # Lire tous les caractères disponibles
+                chunk = ser.read(ser.in_waiting or 1).decode('utf-8', errors='ignore')
+                serial_buffer += chunk
+
+                # Tant qu'il y a une ligne complète
+                while '\n' in serial_buffer:
+                    line, serial_buffer = serial_buffer.split('\n', 1)
+                    line = line.strip()
+
+                    try:
+                        parts = line.split("|")
+                        if len(parts) < 3:
+                            print("⚠️ Ligne incomplète :", line)
+                            continue
+
+                        v1_new = float(parts[0].split(":")[1].strip())
+                        v2_new = float(parts[1].split(":")[1].strip())
+                        v3_new = float(parts[2].split(":")[1].strip())
+                        timestamp = time.time()
+
+                        with lock:
+                            v1, v2, v3 = v1_new, v2_new, v3_new
+                            msg = f"{timestamp:.2f},{v1:.2f},{v2:.2f},{v3:.2f}\n"
+
+                        try:
+                            conn.sendall(msg.encode())
+                        except BrokenPipeError:
+                            print("❌ Connexion TCP perdue (Broken Pipe)")
+                            stop_event.set()
+                            break
+
+                    except (IndexError, ValueError) as e:
+                        print("⚠️ Erreur de parsing:", e, "dans la ligne :", line)
+
+        except Exception as e:
+            print("❌ Erreur dans lecture_vitesse:", e)
+            stop_event.set()
+            break
 # Lancement du thread
 thread = threading.Thread(target=lecture_vitesse)
 thread.start() 
